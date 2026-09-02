@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard Interativo de Metas - PaguePlay</title>
-    <!-- Ícones Lucide -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
       :root {
@@ -439,7 +438,6 @@
     </style>
   </head>
   <body>
-    <!-- Logo PaguePlay -->
     <div class="header-logo">
       <img
         src="https://pagueplay.com.br/build/images/logo-pagueplay.svg"
@@ -448,7 +446,6 @@
     </div>
 
     <div class="dashboard-wrapper">
-      <!-- Painel de Data e Dias Úteis -->
       <div class="days-panel">
         <div class="date-badge">
           <i data-lucide="calendar-days"></i>
@@ -471,23 +468,19 @@
           <input
             type="number"
             id="worked-days-input"
-            value="20"
+            value="1"
             min="1"
             onchange="recalculateAll()"
           />
         </div>
       </div>
 
-      <!-- Bloco 1: Os 4 Setores Editáveis -->
       <div class="block-container" id="sectors-block"></div>
 
-      <!-- Bloco 2: Totalizador (PaguePlay Marília) -->
       <div class="block-container" id="total-block"></div>
 
-      <!-- Bloco 3: Geral Empresa -->
       <div class="block-container" id="geral-block"></div>
 
-      <!-- Bloco 4: Caixa de Colagem Rápida -->
       <div class="paste-box-container">
         <div class="paste-box-title">
           <i data-lucide="clipboard-paste"></i>
@@ -513,28 +506,28 @@
         {
           id: 0,
           label: "Play 4 - Marília",
-          target: 250000.0,
-          current: 188700.74,
+          target: 220000.0,
+          current: 0.0,
         },
         {
           id: 1,
           label: "Play 5 - Marília",
-          target: 560000.0,
-          current: 405272.78,
+          target: 515000.0,
+          current: 0.0,
         },
         {
           id: 2,
           label: "Play Mix - Marília",
-          target: 120000.0,
-          current: 106520.69,
+          target: 150000.0,
+          current: 0.0,
         },
-        { id: 3, label: "Cofen", target: 1400000.0, current: 1058164.82 },
+        { id: 3, label: "Cofen", target: 1500000.0, current: 0.0 },
       ];
 
       let geralData = {
         label: "GERAL - Empresa",
-        target: 13000000.0,
-        current: 10718879.5,
+        target: 13200000.0,
+        current: 0.0,
         icon: "building-2",
       };
 
@@ -617,10 +610,10 @@
               <div class="arrow-label"><span>${item.label}</span></div>
             </div>
             <div class="target-col">
-              <input 
-                type="text" 
-                class="input-val" 
-                value="${formatCurrency(item.target)}" 
+              <input
+                type="text"
+                class="input-val"
+                value="${formatCurrency(item.target)}"
                 onfocus="this.value = '${item.target}'"
                 onblur="updateSectorValue(${idx}, 'target', this.value)"
               />
@@ -631,10 +624,10 @@
                 100
               )}%;"></div>
               <div class="glass-pill">
-                <input 
-                  type="text" 
-                  class="input-val" 
-                  value="${formatCurrency(item.current)}" 
+                <input
+                  type="text"
+                  class="input-val"
+                  value="${formatCurrency(item.current)}"
                   onfocus="this.value = '${item.current}'"
                   onblur="updateSectorValue(${idx}, 'current', this.value)"
                 />
@@ -722,10 +715,10 @@
             </div>
           </div>
           <div class="target-col">
-            <input 
-              type="text" 
-              class="input-val" 
-              value="${formatCurrency(geralData.target)}" 
+            <input
+              type="text"
+              class="input-val"
+              value="${formatCurrency(geralData.target)}"
               onfocus="this.value = '${geralData.target}'"
               onblur="updateGeralValue('target', this.value)"
             />
@@ -736,10 +729,10 @@
               100
             )}%;"></div>
             <div class="glass-pill">
-              <input 
-                type="text" 
-                class="input-val" 
-                value="${formatCurrency(geralData.current)}" 
+              <input
+                type="text"
+                class="input-val"
+                value="${formatCurrency(geralData.current)}"
                 onfocus="this.value = '${geralData.current}'"
                 onblur="updateGeralValue('current', this.value)"
               />
