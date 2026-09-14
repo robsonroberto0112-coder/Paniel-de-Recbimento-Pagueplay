@@ -3,784 +3,752 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard Interativo de Metas - PaguePlay</title>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <title>Desafio Semanal — Sextou Mais Cedo | PaguePlay</title>
     <style>
       :root {
-        --pagbank-green: #00a868;
-        --pagbank-green-dark: #007a4b;
-        --pagueplay-blue: #0082ca;
-        --pagueplay-blue-dark: #005b8e;
-        --pagbank-dark: #1f2937;
-        --pagbank-bg: #f8fafc;
-        --pagbank-card-bg: #ffffff;
-
-        /* Cores das Faixas de Percentual */
-        --status-green: #10b981;
-        --status-blue: #0082ca;
-        --status-yellow: #f59e0b;
-        --status-red: #ef4444;
+        --primary-green: #00e676;
+        --primary-blue: #00b0ff;
+        --primary-orange: #ff9100;
+        --primary-purple: #d500f9;
+        --bg-dark: #0a0f1d;
+        --card-bg: #131b2e;
+        --text-light: #ffffff;
+        --text-muted: #a0aec0;
       }
 
       * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
-        font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto,
+          sans-serif;
       }
 
       body {
-        background-color: var(--pagbank-bg);
+        background-color: var(--bg-dark);
+        color: var(--text-light);
         display: flex;
-        flex-direction: column;
+        justify-content: center;
         align-items: center;
-        padding: 30px 15px;
+        min-height: 100vh;
+        padding: 30px;
       }
 
-      .header-logo {
-        margin-bottom: 24px;
+      .container {
+        width: 100%;
+        max-width: 1300px;
+        background: linear-gradient(160deg, #0b1426 0%, #0f1d38 100%);
+        border-radius: 28px;
+        box-shadow: 0 25px 50px -12px rgba(0, 230, 118, 0.25),
+          0 0 40px rgba(0, 0, 0, 0.8);
+        border: 2px solid rgba(0, 230, 118, 0.3);
+        overflow: hidden;
+        position: relative;
+        padding: 40px;
+      }
+
+      .top-glow {
+        position: absolute;
+        top: -120px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 600px;
+        height: 300px;
+        background: radial-gradient(
+          circle,
+          rgba(0, 230, 118, 0.25) 0%,
+          rgba(0, 0, 0, 0) 70%
+        );
+        pointer-events: none;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 35px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .logo {
+        max-width: 240px;
+        height: auto;
+        margin-bottom: 20px;
+        filter: drop-shadow(0 6px 15px rgba(0, 230, 118, 0.3));
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(90deg, #ffd700, #ff8800);
+        color: #000;
+        font-weight: 900;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        padding: 8px 22px;
+        border-radius: 50px;
+        box-shadow: 0 4px 20px rgba(255, 184, 0, 0.5);
+        margin-bottom: 15px;
+      }
+
+      h1 {
+        font-size: 3.2rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        background: linear-gradient(90deg, #ffffff, #00e676);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 12px;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      }
+
+      .subtitle {
+        font-size: 1.25rem;
+        color: var(--text-muted);
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.5;
+      }
+
+      .subtitle strong {
+        color: var(--primary-green);
+      }
+
+      /* Layout Principal em 2 Colunas */
+      .main-layout {
+        display: grid;
+        grid-template-columns: 1fr 480px;
+        gap: 30px;
+        margin-bottom: 30px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Grid dos Cards de Níveis */
+      .cards-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      .card {
+        border-radius: 20px;
+        padding: 24px 22px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .card.active-tier {
+        transform: scale(1.04);
+        box-shadow: 0 0 35px rgba(0, 230, 118, 0.6);
+        border-width: 3px;
+      }
+
+      .tier-1 {
+        background: linear-gradient(
+          135deg,
+          rgba(0, 230, 118, 0.15),
+          rgba(0, 200, 83, 0.05)
+        );
+        border: 2px solid #00e676;
+      }
+      .tier-1 .card-tag {
+        color: #00e676;
+      }
+      .tier-1 .card-benefit {
+        background: linear-gradient(
+          90deg,
+          rgba(0, 230, 118, 0.25),
+          rgba(0, 230, 118, 0.15)
+        );
+        border: 1px solid rgba(0, 230, 118, 0.5);
+      }
+      .tier-1 .benefit-time {
+        color: #00e676;
+      }
+
+      .tier-2 {
+        background: linear-gradient(
+          135deg,
+          rgba(0, 176, 255, 0.15),
+          rgba(41, 121, 255, 0.05)
+        );
+        border: 2px solid #00b0ff;
+      }
+      .tier-2 .card-tag {
+        color: #00b0ff;
+      }
+      .tier-2 .card-benefit {
+        background: linear-gradient(
+          90deg,
+          rgba(0, 176, 255, 0.25),
+          rgba(0, 176, 255, 0.15)
+        );
+        border: 1px solid rgba(0, 176, 255, 0.5);
+      }
+      .tier-2 .benefit-time {
+        color: #00b0ff;
+      }
+
+      .tier-3 {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 145, 0, 0.15),
+          rgba(255, 109, 0, 0.05)
+        );
+        border: 2px solid #ff9100;
+      }
+      .tier-3 .card-tag {
+        color: #ff9100;
+      }
+      .tier-3 .card-benefit {
+        background: linear-gradient(
+          90deg,
+          rgba(255, 145, 0, 0.25),
+          rgba(255, 145, 0, 0.15)
+        );
+        border: 1px solid rgba(255, 145, 0, 0.5);
+      }
+      .tier-3 .benefit-time {
+        color: #ff9100;
+      }
+
+      .tier-4 {
+        background: linear-gradient(
+          135deg,
+          rgba(213, 0, 249, 0.15),
+          rgba(170, 0, 255, 0.05)
+        );
+        border: 2px solid #d500f9;
+      }
+      .tier-4 .card-tag {
+        color: #e040fb;
+      }
+      .tier-4 .card-benefit {
+        background: linear-gradient(
+          90deg,
+          rgba(213, 0, 249, 0.25),
+          rgba(213, 0, 249, 0.15)
+        );
+        border: 1px solid rgba(213, 0, 249, 0.5);
+      }
+      .tier-4 .benefit-time {
+        color: #e040fb;
+      }
+
+      .card-header-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .card-tag {
+        font-size: 0.85rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .card-icon {
+        font-size: 1.4rem;
+      }
+
+      .card-meta {
+        font-size: 2rem;
+        font-weight: 900;
+        margin-bottom: 14px;
+        color: #ffffff;
+      }
+
+      .card-benefit {
+        border-radius: 14px;
+        padding: 12px 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         text-align: center;
       }
 
-      .header-logo img {
-        max-width: 230px;
-        filter: drop-shadow(0px 6px 10px rgba(0, 0, 0, 0.08));
+      .benefit-time {
+        font-size: 2.2rem;
+        font-weight: 900;
+        letter-spacing: 1px;
       }
 
-      .dashboard-wrapper {
-        width: 100%;
-        max-width: 960px;
+      /* Painel Interativo de Simulação / Calculadora Redesenho */
+      .calc-panel {
+        background: rgba(19, 27, 46, 0.95);
+        border: 2px solid rgba(0, 230, 118, 0.4);
+        border-radius: 24px;
+        padding: 28px;
         display: flex;
         flex-direction: column;
         gap: 18px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
       }
 
-      /* PAINEL DE DIAS ÚTEIS E DATA */
-      .days-panel {
-        background: #ffffff;
-        border-radius: 14px;
-        padding: 16px 20px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-        border: 1px solid rgba(226, 232, 240, 0.8);
+      .calc-header {
         display: flex;
         align-items: center;
-        justify-content: space-around;
+        gap: 12px;
+        font-size: 1.3rem;
+        font-weight: 900;
+        color: #ffffff;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 12px;
+      }
+
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .input-group label {
+        font-size: 0.85rem;
+        font-weight: 800;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .input-wrapper input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.06);
+        border: 2px solid rgba(255, 255, 255, 0.15);
+        border-radius: 14px;
+        padding: 14px 16px;
+        color: var(--primary-green);
+        font-size: 1.3rem;
+        font-weight: 900;
+        outline: none;
+        transition: all 0.2s ease;
+      }
+
+      .input-wrapper input:focus {
+        border-color: var(--primary-green);
+        background: rgba(0, 230, 118, 0.05);
+        box-shadow: 0 0 15px rgba(0, 230, 118, 0.2);
+      }
+
+      .highlight-card {
+        background: linear-gradient(
+          135deg,
+          rgba(0, 230, 118, 0.1),
+          rgba(0, 176, 255, 0.1)
+        );
+        border: 2px solid rgba(0, 230, 118, 0.3);
+        border-radius: 16px;
+        padding: 16px;
+        text-align: center;
+      }
+
+      .highlight-label {
+        font-size: 0.85rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        letter-spacing: 1px;
+        margin-bottom: 6px;
+      }
+
+      .highlight-value-large {
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: #ffffff;
+        text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+      }
+
+      .percentage-card {
+        background: linear-gradient(
+          135deg,
+          rgba(0, 230, 118, 0.2),
+          rgba(0, 176, 255, 0.2)
+        );
+        border: 2px solid var(--primary-green);
+        border-radius: 18px;
+        padding: 18px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 230, 118, 0.25);
+      }
+
+      .percentage-label {
+        font-size: 0.9rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        color: var(--primary-green);
+        letter-spacing: 1.5px;
+        margin-bottom: 4px;
+      }
+
+      .percentage-value-huge {
+        font-size: 3.5rem;
+        font-weight: 900;
+        color: #ffffff;
+        line-height: 1;
+        text-shadow: 0 0 20px rgba(0, 230, 118, 0.6);
+        margin: 6px 0;
+      }
+
+      .result-status {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 14px;
+        text-align: center;
+      }
+
+      .status-title {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+      }
+
+      .status-tier {
+        font-size: 1.2rem;
+        font-weight: 900;
+        color: var(--primary-green);
+        margin-bottom: 2px;
+      }
+
+      .status-time {
+        font-size: 1.6rem;
+        font-weight: 900;
+        color: #ffffff;
+      }
+
+      /* Regras e Período */
+      .rules-section {
+        background: linear-gradient(
+          90deg,
+          rgba(0, 230, 118, 0.15),
+          rgba(0, 176, 255, 0.15)
+        );
+        border-radius: 20px;
+        padding: 20px 24px;
+        border: 2px dashed rgba(0, 230, 118, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         gap: 15px;
-        flex-wrap: wrap;
+        position: relative;
+        z-index: 1;
+      }
+
+      .rules-info {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .rules-icon {
+        font-size: 2.2rem;
+        background: rgba(255, 255, 255, 0.1);
+        width: 54px;
+        height: 54px;
+        min-width: 54px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .rules-text h3 {
+        font-size: 1.1rem;
+        color: #ffffff;
+        margin-bottom: 3px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 800;
+      }
+
+      .rules-text p {
+        font-size: 0.95rem;
+        color: #cbd5e1;
+      }
+
+      .rules-text strong {
+        color: #00e676;
+        font-weight: 800;
       }
 
       .date-badge {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: #ecfdf5;
-        color: var(--pagbank-green-dark);
-        padding: 8px 16px;
-        border-radius: 10px;
-        font-weight: 700;
+        background: linear-gradient(135deg, #00e676, #00b0ff);
+        color: #050b14;
+        font-weight: 900;
+        padding: 10px 18px;
+        border-radius: 12px;
         font-size: 0.95rem;
-        border: 1px solid rgba(16, 185, 129, 0.2);
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
+        text-transform: uppercase;
+        white-space: nowrap;
+        flex-shrink: 0;
       }
 
-      .day-field {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: 700;
-        color: #334155;
-        font-size: 0.95rem;
+      @media (max-width: 1024px) {
+        .main-layout {
+          grid-template-columns: 1fr;
+        }
       }
 
-      .day-field input {
-        width: 65px;
-        height: 36px;
-        border: 1.5px solid #cbd5e1;
-        border-radius: 8px;
-        text-align: center;
-        font-weight: 800;
-        font-size: 1rem;
-        color: #0f172a;
-        outline: none;
-        transition: all 0.2s;
-      }
-
-      .day-field input:focus {
-        border-color: var(--pagbank-green);
-        box-shadow: 0 0 0 3px rgba(0, 168, 104, 0.15);
-      }
-
-      /* Container de Bloco */
-      .block-container {
-        background-color: var(--pagbank-card-bg);
-        border-radius: 16px;
-        padding: 10px;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05),
-          0 8px 10px -6px rgba(0, 0, 0, 0.01);
-        border: 1px solid #e2e8f0;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      /* Linhas individuais */
-      .table-row {
-        display: flex;
-        align-items: center;
-        height: 52px;
-        background: #f8fafc;
-        border-radius: 10px;
-        overflow: hidden;
-        border: 1px solid #e2e8f0;
-        transition: border-color 0.2s ease;
-      }
-
-      /* Coluna 1: Rótulo 3D */
-      .label-col {
-        width: 30%;
-        height: 100%;
-        padding-right: 8px;
-      }
-
-      .arrow-label {
-        background: linear-gradient(
-          135deg,
-          var(--pagbank-green) 0%,
-          var(--pagbank-green-dark) 100%
-        );
-        color: #ffffff;
-        font-weight: 700;
-        font-size: 0.95rem;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        padding-left: 16px;
-        clip-path: polygon(0% 0%, 90% 0%, 100% 50%, 90% 100%, 0% 100%);
-        filter: drop-shadow(2px 0px 4px rgba(0, 0, 0, 0.15));
-        gap: 8px;
-        letter-spacing: 0.2px;
-      }
-
-      .arrow-label i {
-        width: 18px;
-        height: 18px;
-      }
-
-      /* Coluna 2: Input da Meta */
-      .target-col {
-        width: 23%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-right: 1px solid #e2e8f0;
-        background: #ffffff;
-        padding: 0 8px;
-      }
-
-      /* Estilo de Input Elegante para Metas e Valores */
-      .input-val {
-        width: 100%;
-        height: 36px;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        text-align: center;
-        font-weight: 800;
-        color: #0f172a;
-        font-size: 0.92rem;
-        background: #f8fafc;
-        outline: none;
-        transition: all 0.2s ease;
-        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
-      }
-
-      .input-val:focus {
-        border-color: var(--pagbank-green);
-        background: #ffffff;
-        box-shadow: 0 0 0 3px rgba(0, 168, 104, 0.15);
-      }
-
-      /* Coluna 3: Barra de Progresso */
-      .progress-col {
-        width: 32%;
-        height: 100%;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-right: 1px solid #e2e8f0;
-        background: #f1f5f9;
-        overflow: hidden;
-        padding: 0 8px;
-      }
-
-      .progress-bar {
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        background: linear-gradient(
-          90deg,
-          var(--pagbank-green) 0%,
-          #10b981 100%
-        );
-        border-top-right-radius: 6px;
-        border-bottom-right-radius: 6px;
-        box-shadow: 2px 0 8px rgba(0, 168, 104, 0.25);
-        transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-
-      /* Card de Cristal / Glassmorphism sobre a Barra */
-      .glass-pill {
-        position: relative;
-        z-index: 2;
-        width: 100%;
-        height: 36px;
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.88);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 255, 255, 0.9);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08),
-          inset 0 1px 0 rgba(255, 255, 255, 0.9);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0 4px;
-      }
-
-      .glass-pill .input-val {
-        background: transparent;
-        border: none;
-        box-shadow: none;
-        height: 100%;
-        font-size: 0.92rem;
-        color: #0f172a;
-        font-weight: 800;
-      }
-
-      .readonly-val {
-        position: relative;
-        z-index: 2;
-        font-weight: 800;
-        font-size: 0.92rem;
-        color: #0f172a;
-        width: 100%;
-        text-align: center;
-      }
-
-      /* Coluna 4: Caixinha do Percentual Dinâmica */
-      .percent-col {
-        width: 15%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 800;
-        font-size: 0.95rem;
-        color: #ffffff;
-        transition: background-color 0.3s ease;
-        letter-spacing: 0.3px;
-      }
-
-      .status-green {
-        background-color: var(--status-green) !important;
-      }
-
-      .status-blue {
-        background-color: var(--status-blue) !important;
-      }
-
-      .status-yellow {
-        background-color: var(--status-yellow) !important;
-        color: #1e293b !important;
-      }
-
-      .status-red {
-        background-color: var(--status-red) !important;
-      }
-
-      /* ESTILOS AZUL: LINHA TOTAL (PaguePlay Marília) */
-      .row-total {
-        background: #f0f9ff;
-        border-color: #bae6fd;
-      }
-
-      .row-total .arrow-label {
-        background: linear-gradient(
-          135deg,
-          var(--pagueplay-blue) 0%,
-          var(--pagueplay-blue-dark) 100%
-        );
-      }
-
-      .row-total .progress-col {
-        background: #e0f2fe;
-      }
-
-      .row-total .progress-bar {
-        background: linear-gradient(
-          90deg,
-          var(--pagueplay-blue) 0%,
-          #38bdf8 100%
-        );
-        box-shadow: 2px 0 8px rgba(0, 130, 202, 0.25);
-      }
-
-      /* ESTILOS: GERAL EMPRESA */
-      .row-geral {
-        background: #0f172a;
-        border-color: #1e293b;
-        color: #ffffff;
-      }
-
-      .row-geral .arrow-label {
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-        color: #facc15;
-      }
-
-      .row-geral .target-col {
-        background: #0f172a;
-        border-color: #1e293b;
-      }
-
-      .row-geral .target-col .input-val {
-        background: #1e293b;
-        color: #f8fafc;
-        border-color: #334155;
-      }
-
-      .row-geral .progress-col {
-        background: #1e293b;
-        border-color: #334155;
-      }
-
-      .row-geral .progress-bar {
-        background: linear-gradient(90deg, #eab308 0%, #facc15 100%);
-        box-shadow: 2px 0 10px rgba(250, 204, 21, 0.3);
-      }
-
-      .row-geral .glass-pill {
-        background: rgba(15, 23, 42, 0.85);
-        border-color: rgba(255, 255, 255, 0.12);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-      }
-
-      .row-geral .glass-pill .input-val {
-        color: #ffffff;
-      }
-
-      /* CAIXA DE COLAGEM RÁPIDA */
-      .paste-box-container {
-        background: #ffffff;
-        border-radius: 16px;
-        padding: 18px 20px;
-        border: 1.5px dashed #a7f3d0;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .paste-box-title {
-        font-size: 0.9rem;
-        font-weight: 700;
-        color: #334155;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .paste-input-wrapper {
-        display: flex;
-        gap: 10px;
-      }
-
-      .paste-input {
-        flex: 1;
-        height: 40px;
-        border: 1px solid #cbd5e1;
-        border-radius: 10px;
-        padding: 0 14px;
-        font-size: 0.9rem;
-        outline: none;
-        transition: all 0.2s;
-      }
-
-      .paste-input:focus {
-        border-color: var(--pagbank-green);
-        box-shadow: 0 0 0 3px rgba(0, 168, 104, 0.12);
-      }
-
-      .btn-update {
-        background: linear-gradient(
-          135deg,
-          var(--pagbank-green) 0%,
-          var(--pagbank-green-dark) 100%
-        );
-        color: white;
-        border: none;
-        border-radius: 10px;
-        padding: 0 20px;
-        font-weight: 700;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.2s ease;
-        box-shadow: 0 4px 10px rgba(0, 168, 104, 0.2);
-      }
-
-      .btn-update:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 14px rgba(0, 168, 104, 0.28);
+      @media (max-width: 680px) {
+        .cards-grid {
+          grid-template-columns: 1fr;
+        }
+        .rules-section {
+          flex-direction: column;
+          text-align: center;
+          gap: 15px;
+        }
+        .rules-info {
+          flex-direction: column;
+        }
+        h1 {
+          font-size: 2.2rem;
+        }
+        .container {
+          padding: 25px 20px;
+        }
+        .percentage-value-huge {
+          font-size: 2.8rem;
+        }
+        .highlight-value-large {
+          font-size: 1.8rem;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="header-logo">
-      <img
-        src="https://pagueplay.com.br/build/images/logo-pagueplay.svg"
-        alt="Logo PaguePlay"
-      />
-    </div>
+    <div class="container">
+      <div class="top-glow"></div>
 
-    <div class="dashboard-wrapper">
-      <div class="days-panel">
-        <div class="date-badge">
-          <i data-lucide="calendar-days"></i>
-          <span id="current-date-display">--/--/----</span>
+      <div class="header">
+        <img
+          src="https://pagueplay.com.br/build/images/logo-pagueplay.svg"
+          alt="PaguePlay Logo"
+          class="logo"
+        />
+        <br />
+        <div class="badge">🏆 DESAFIO SEMANAL</div>
+        <h1>SEXTOU MAIS CEDO</h1>
+        <p class="subtitle">
+          Quanto maior o seu resultado,
+          <strong>mais cedo você poderá sair!</strong>
+        </p>
+      </div>
+
+      <div class="main-layout">
+        <!-- Cards dos Níveis -->
+        <div class="cards-grid">
+          <div class="card tier-1" id="card-tier-1">
+            <div class="card-header-info">
+              <span class="card-tag">🚀 Nível Diamante</span>
+              <span class="card-icon">👑</span>
+            </div>
+            <div class="card-meta">120% ou +</div>
+            <div class="card-benefit">
+              <span class="benefit-time">12h00</span>
+            </div>
+          </div>
+
+          <div class="card tier-2" id="card-tier-2">
+            <div class="card-header-info">
+              <span class="card-tag">🔥 Nível Ouro</span>
+              <span class="card-icon">🥇</span>
+            </div>
+            <div class="card-meta">100% a 119,9%</div>
+            <div class="card-benefit">
+              <span class="benefit-time">13h30</span>
+            </div>
+          </div>
+
+          <div class="card tier-3" id="card-tier-3">
+            <div class="card-header-info">
+              <span class="card-tag">⚡ Nível Prata</span>
+              <span class="card-icon">🥈</span>
+            </div>
+            <div class="card-meta">95% a 99,9%</div>
+            <div class="card-benefit">
+              <span class="benefit-time">15h00</span>
+            </div>
+          </div>
+
+          <div class="card tier-4" id="card-tier-4">
+            <div class="card-header-info">
+              <span class="card-tag">📌 Horário Padrão</span>
+              <span class="card-icon">⏱️</span>
+            </div>
+            <div class="card-meta">Abaixo de 95%</div>
+            <div class="card-benefit">
+              <span class="benefit-time">Normal</span>
+            </div>
+          </div>
         </div>
-        <div class="day-field">
-          <i data-lucide="calendar"></i>
-          <span>Dias Úteis do Mês:</span>
-          <input
-            type="number"
-            id="total-days-input"
-            value="21"
-            min="1"
-            onchange="recalculateAll()"
-          />
-        </div>
-        <div class="day-field">
-          <i data-lucide="clock"></i>
-          <span>Dias Trabalhados:</span>
-          <input
-            type="number"
-            id="worked-days-input"
-            value="1"
-            min="1"
-            onchange="recalculateAll()"
-          />
+
+        <!-- Painel Interativo de Simulação do Operador -->
+        <div class="calc-panel">
+          <div class="calc-header">🧮 Simulação do Operador</div>
+
+          <div class="input-group">
+            <label for="metaMensalInput">Digite sua Meta Mensal</label>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                id="metaMensalInput"
+                placeholder="R$ 0,00"
+                oninput="formatarECalcular(this)"
+              />
+            </div>
+          </div>
+
+          <div class="highlight-card">
+            <div class="highlight-label">Meta da sua Semana</div>
+            <div class="highlight-value-large" id="metaSemanal">R$ 0,00</div>
+          </div>
+
+          <div class="input-group">
+            <label for="recebidoInput">Recebido até o momento</label>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                id="recebidoInput"
+                placeholder="R$ 0,00"
+                oninput="formatarECalcular(this)"
+              />
+            </div>
+          </div>
+
+          <div class="percentage-card">
+            <div class="percentage-label">Atingimento Semanal</div>
+            <div class="percentage-value-huge" id="porcentagem">0,0%</div>
+          </div>
+
+          <div class="result-status">
+            <div class="status-title">Status da Saída</div>
+            <div class="status-tier" id="statusNivel">
+              Informe os valores acima
+            </div>
+            <div class="status-time" id="statusHorario">--:--</div>
+          </div>
         </div>
       </div>
 
-      <div class="block-container" id="sectors-block"></div>
-
-      <div class="block-container" id="total-block"></div>
-
-      <div class="block-container" id="geral-block"></div>
-
-      <div class="paste-box-container">
-        <div class="paste-box-title">
-          <i data-lucide="clipboard-paste"></i>
-          <span>Atualização Rápida por Entrada / Colagem:</span>
+      <!-- Regras e Período -->
+      <div class="rules-section">
+        <div class="rules-info">
+          <div class="rules-icon">⏳</div>
+          <div class="rules-text">
+            <h3>Banco de Horas</h3>
+            <p>
+              Realizar <strong>1h de banco por dia</strong> durante
+              <strong>3 dias</strong> da semana.
+            </p>
+          </div>
         </div>
-        <div class="paste-input-wrapper">
-          <input
-            type="text"
-            id="quick-paste-input"
-            class="paste-input"
-            placeholder="Cole os dados e pressione Enter"
-          />
-          <button class="btn-update" onclick="processQuickInput()">
-            <i data-lucide="refresh-cw"></i>
-            <span>Atualizar</span>
-          </button>
-        </div>
+        <div class="date-badge">📅 Período: 14 a 17</div>
       </div>
     </div>
 
     <script>
-      let sectorData = [
-        {
-          id: 0,
-          label: "Play 4 - Marília",
-          target: 220000.0,
-          current: 0.0,
-        },
-        {
-          id: 1,
-          label: "Play 5 - Marília",
-          target: 515000.0,
-          current: 0.0,
-        },
-        {
-          id: 2,
-          label: "Play Mix - Marília",
-          target: 150000.0,
-          current: 0.0,
-        },
-        { id: 3, label: "Cofen", target: 1500000.0, current: 0.0 },
-      ];
-
-      let geralData = {
-        label: "GERAL - Empresa",
-        target: 13200000.0,
-        current: 0.0,
-        icon: "building-2",
-      };
-
-      function setCurrentDate() {
-        const today = new Date();
-        const dd = String(today.getDate()).padStart(2, "0");
-        const mm = String(today.getMonth() + 1).padStart(2, "0");
-        const yyyy = today.getFullYear();
-        document.getElementById(
-          "current-date-display"
-        ).innerText = `${dd}/${mm}/${yyyy}`;
+      // Converte string BRL (R$ 1.234,56) para float (1234.56)
+      function parseBRL(valStr) {
+        if (!valStr) return 0;
+        const cleanStr = valStr.replace(/[^\d]/g, "");
+        return parseFloat(cleanStr) / 100 || 0;
       }
 
-      function getDaysConfig() {
-        const totalDays =
-          parseFloat(document.getElementById("total-days-input").value) || 1;
-        const workedDays =
-          parseFloat(document.getElementById("worked-days-input").value) || 1;
-        return { totalDays, workedDays };
-      }
-
-      function formatCurrency(val) {
+      // Formata float (1234.56) para BRL (R$ 1.234,56)
+      function formatBRL(val) {
         return val.toLocaleString("pt-BR", {
           style: "currency",
           currency: "BRL",
         });
       }
 
-      function formatPercent(val) {
-        if (isNaN(val) || !isFinite(val)) return "0,00%";
-        return (
-          val.toLocaleString("pt-BR", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          }) + "%"
-        );
+      // Aplica a máscara de moeda no input enquanto digita
+      function formatarCampoMoeda(input) {
+        let value = input.value.replace(/[^\d]/g, "");
+        if (value === "") {
+          input.value = "";
+          return 0;
+        }
+        let numberValue = parseFloat(value) / 100;
+        input.value = formatBRL(numberValue);
+        return numberValue;
       }
 
-      function parseFormattedNumber(val) {
-        if (typeof val === "number") return val;
-        if (!val) return 0;
-        let clean = val.replace(/[R$\s.]/g, "").replace(",", ".");
-        return parseFloat(clean) || 0;
-      }
+      function formatarECalcular() {
+        const elMeta = document.getElementById("metaMensalInput");
+        const elRecebido = document.getElementById("recebidoInput");
 
-      function getStatusClass(percent) {
-        if (percent >= 100) return "status-green";
-        if (percent >= 80) return "status-blue";
-        if (percent >= 40) return "status-yellow";
-        return "status-red";
-      }
+        const metaMensal = parseBRL(elMeta.value);
+        const recebido = parseBRL(elRecebido.value);
 
-      function initDashboard() {
-        setCurrentDate();
-        renderSectors();
-        renderTotal();
-        renderGeral();
-        lucide.createIcons();
+        if (elMeta.value !== "") elMeta.value = formatBRL(metaMensal);
+        if (elRecebido.value !== "") elRecebido.value = formatBRL(recebido);
 
+        // Cálculo da meta semanal: (Meta Mensal / 21 dias úteis) * 5 dias da semana
+        const metaSemanal = (metaMensal / 21) * 5;
+        document.getElementById("metaSemanal").innerText =
+          formatBRL(metaSemanal);
+
+        let pct = 0;
+        if (metaSemanal > 0) {
+          pct = (recebido / metaSemanal) * 100;
+        }
+
+        document.getElementById("porcentagem").innerText =
+          pct.toFixed(1).replace(".", ",") + "%";
+
+        // Reset de destaques nos cards
         document
-          .getElementById("quick-paste-input")
-          .addEventListener("keypress", function (e) {
-            if (e.key === "Enter") processQuickInput();
-          });
-      }
+          .querySelectorAll(".card")
+          .forEach((c) => c.classList.remove("active-tier"));
 
-      function renderSectors() {
-        const { totalDays, workedDays } = getDaysConfig();
-        const container = document.getElementById("sectors-block");
+        const elNivel = document.getElementById("statusNivel");
+        const elHorario = document.getElementById("statusHorario");
 
-        container.innerHTML = sectorData
-          .map((item, idx) => {
-            const projectedVal = (item.current / workedDays) * totalDays;
-            const projectPercentage = (projectedVal / item.target) * 100;
-            const statusClass = getStatusClass(projectPercentage);
+        if (metaMensal === 0 || recebido === 0) {
+          elNivel.innerText = "Informe os valores acima";
+          elHorario.innerText = "--:--";
+          return;
+        }
 
-            return `
-          <div class="table-row">
-            <div class="label-col">
-              <div class="arrow-label"><span>${item.label}</span></div>
-            </div>
-            <div class="target-col">
-              <input
-                type="text"
-                class="input-val"
-                value="${formatCurrency(item.target)}"
-                onfocus="this.value = '${item.target}'"
-                onblur="updateSectorValue(${idx}, 'target', this.value)"
-              />
-            </div>
-            <div class="progress-col">
-              <div class="progress-bar" style="width: ${Math.min(
-                projectPercentage,
-                100
-              )}%;"></div>
-              <div class="glass-pill">
-                <input
-                  type="text"
-                  class="input-val"
-                  value="${formatCurrency(item.current)}"
-                  onfocus="this.value = '${item.current}'"
-                  onblur="updateSectorValue(${idx}, 'current', this.value)"
-                />
-              </div>
-            </div>
-            <div class="percent-col ${statusClass}">
-              ${formatPercent(projectPercentage)}
-            </div>
-          </div>
-        `;
-          })
-          .join("");
-      }
-
-      function updateSectorValue(index, field, rawValue) {
-        sectorData[index][field] = parseFormattedNumber(rawValue);
-        recalculateAll();
-      }
-
-      function updateGeralValue(field, rawValue) {
-        geralData[field] = parseFormattedNumber(rawValue);
-        recalculateAll();
-      }
-
-      function recalculateAll() {
-        renderSectors();
-        renderTotal();
-        renderGeral();
-      }
-
-      function renderTotal() {
-        const { totalDays, workedDays } = getDaysConfig();
-        const sumTarget = sectorData.reduce((acc, cur) => acc + cur.target, 0);
-        const sumCurrent = sectorData.reduce(
-          (acc, cur) => acc + cur.current,
-          0
-        );
-
-        const totalProjected = (sumCurrent / workedDays) * totalDays;
-        const totalPercentage = (totalProjected / sumTarget) * 100;
-        const statusClass = getStatusClass(totalPercentage);
-
-        const container = document.getElementById("total-block");
-        container.innerHTML = `
-        <div class="table-row row-total">
-          <div class="label-col">
-            <div class="arrow-label">
-              <i data-lucide="calculator"></i>
-              <span>PaguePlay Marília</span>
-            </div>
-          </div>
-          <div class="target-col">
-            <span class="readonly-val">${formatCurrency(sumTarget)}</span>
-          </div>
-          <div class="progress-col">
-            <div class="progress-bar" style="width: ${Math.min(
-              totalPercentage,
-              100
-            )}%;"></div>
-            <div class="glass-pill">
-              <span class="readonly-val">${formatCurrency(sumCurrent)}</span>
-            </div>
-          </div>
-          <div class="percent-col ${statusClass}">
-            ${formatPercent(totalPercentage)}
-          </div>
-        </div>
-      `;
-        lucide.createIcons();
-      }
-
-      function renderGeral() {
-        const { totalDays, workedDays } = getDaysConfig();
-        const projectedVal = (geralData.current / workedDays) * totalDays;
-        const percentage = (projectedVal / geralData.target) * 100;
-        const statusClass = getStatusClass(percentage);
-
-        const container = document.getElementById("geral-block");
-        container.innerHTML = `
-        <div class="table-row row-geral">
-          <div class="label-col">
-            <div class="arrow-label">
-              <i data-lucide="${geralData.icon}"></i>
-              <span>${geralData.label}</span>
-            </div>
-          </div>
-          <div class="target-col">
-            <input
-              type="text"
-              class="input-val"
-              value="${formatCurrency(geralData.target)}"
-              onfocus="this.value = '${geralData.target}'"
-              onblur="updateGeralValue('target', this.value)"
-            />
-          </div>
-          <div class="progress-col">
-            <div class="progress-bar" style="width: ${Math.min(
-              percentage,
-              100
-            )}%;"></div>
-            <div class="glass-pill">
-              <input
-                type="text"
-                class="input-val"
-                value="${formatCurrency(geralData.current)}"
-                onfocus="this.value = '${geralData.current}'"
-                onblur="updateGeralValue('current', this.value)"
-              />
-            </div>
-          </div>
-          <div class="percent-col ${statusClass}">
-            ${formatPercent(percentage)}
-          </div>
-        </div>
-      `;
-        lucide.createIcons();
-      }
-
-      function processQuickInput() {
-        const inputEl = document.getElementById("quick-paste-input");
-        const text = inputEl.value.trim();
-        if (!text) return;
-
-        const numberMatches = text.match(
-          /(?:R\$\s*)?\d{1,3}(?:\.\d{3})*(?:,\d{1,2})?|\d+(?:[.,]\d+)?/g
-        );
-
-        if (numberMatches) {
-          const cleanValues = numberMatches
-            .filter((val) => !val.includes("%"))
-            .map(parseFormattedNumber);
-
-          if (cleanValues.length >= 2) {
-            let matchIdx = 0;
-            for (
-              let i = 0;
-              i < sectorData.length && matchIdx < cleanValues.length;
-              i++
-            ) {
-              if (cleanValues[matchIdx] !== undefined) {
-                sectorData[i].target = cleanValues[matchIdx++];
-              }
-              if (cleanValues[matchIdx] !== undefined) {
-                sectorData[i].current = cleanValues[matchIdx++];
-              }
-            }
-            recalculateAll();
-            inputEl.value = "";
-          }
+        if (pct >= 120) {
+          elNivel.innerText = "🚀 Nível Diamante";
+          elHorario.innerText = "Saída: 12h00";
+          document.getElementById("card-tier-1").classList.add("active-tier");
+        } else if (pct >= 100) {
+          elNivel.innerText = "🔥 Nível Ouro";
+          elHorario.innerText = "Saída: 13h30";
+          document.getElementById("card-tier-2").classList.add("active-tier");
+        } else if (pct >= 95) {
+          elNivel.innerText = "⚡ Nível Prata";
+          elHorario.innerText = "Saída: 15h00";
+          document.getElementById("card-tier-3").classList.add("active-tier");
+        } else {
+          elNivel.innerText = "📌 Horário Padrão";
+          elHorario.innerText = "Saída: Normal";
+          document.getElementById("card-tier-4").classList.add("active-tier");
         }
       }
-
-      document.addEventListener("DOMContentLoaded", initDashboard);
     </script>
   </body>
 </html>
